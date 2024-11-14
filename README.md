@@ -1,89 +1,78 @@
-# Scalable Data Engineering Pipeline
+# Scalable Data Engineering Pipeline with Kafka, Kraft, and Spark
 
 ## Overview
-This project establishes a scalable data engineering pipeline designed to ingest, process, and store data from multiple sources. Leveraging powerful data technologies, this pipeline ensures robust scalability, reliability, and efficiency in handling both real-time and batch data.
+This project implements a comprehensive data engineering pipeline for ingesting, processing, and storing data. Using AWS Lambda, Craft (for Kafka management), and Apache Spark, the pipeline efficiently handles data flow from ingestion to storage, supporting both real-time and batch data needs.
 
 ## Architecture
-![Data Engineering Pipeline Architecture](images/minioArch.jpg)
+![Data Engineering Pipeline Architecture](images/architecture.png)
 
 ## Key Components
 
-1. **Data Sources**: Ingests data from a variety of sources:
-   - **APIs**, **Databases**, **File Systems**, and **Real-Time Streams**.
+1. **Data Ingestion**:
+   - **Python Scripts / API / File Loader**: Supports ingestion from various sources.
+   - **AWS Lambda**: Event-driven functions listen for new data and trigger ingestion in real-time.
 
-2. **Data Ingestion**:
-   - **Apache Airflow**: Orchestrates and schedules data ingestion tasks with error handling.
-   - **Python Scripts**: Custom scripts for specialized extraction and transformation.
-   - **AWS Lambda**: Executes serverless functions for event-driven data processing.
+2. **Data Stream Management**:
+   - **Kafka**: Manages data streaming to ensure consistent data flow.
+   - **Kraft (Kafka Metadata Manager)**: Acts as a zookeeper-like manager, handling metadata, data cataloging, and stream coordination.
+   - **Schema Registry**: Maintains schema consistency across data consumers.
+   - **Control Center**: Provides a dashboard for managing Kafka and Craft streams.
 
-3. **Data Storage**:
-   - **Cassandra**: NoSQL storage solution for structured and semi-structured data.
-   - **MinIO**: Object storage designed for large datasets and files.
+3. **Data Processing**:
+   - **Apache Spark**: Processes data through stages:
+     - **Bronze Layer**: Raw data.
+     - **Silver Layer**: Structured, cleaned data.
+     - **Gold Layer**: Aggregated data for analytics and reporting.
 
-4. **Data Processing**:
-   - **Apache Spark**: Distributed processing for data cleaning, transformation, and analytics.
-   - **Python**: Additional data processing for feature engineering.
-   - **Spark SQL**: SQL-like queries for data manipulation.
-   - **Spark Streaming**: Processes and analyzes real-time data streams.
-
-5. **Data Serving**:
-   - **ClickHouse**: Columnar database for high-performance analytical queries.
-   - **PostgreSQL**: Relational database for specific reporting and ad hoc querying needs.
-
-6. **Monitoring and Logging**:
-   - **Grafana**: Visualizes metrics and logs.
-   - **Prometheus**: Gathers and stores metrics.
-   - **Alerting Systems**: Notifies users of critical issues in real time.
+4. **Data Serving**:
+   - **Cassandra**: Stores processed data, optimizing it for fast querying and analysis.
+   - **Slack**: Sends real-time updates and alerts to team members.
 
 ## Data Flow Architecture
 
 1. **Data Ingestion**:
-   - Data from sources like APIs, databases, and file systems is ingested through **Python scripts** or **AWS Lambda**.
-   - **Apache Airflow** schedules and monitors ingestion tasks for reliability.
+   - Data is ingested using **Python scripts**, API calls, or file loaders.
+   - **AWS Lambda** listens for events, triggering ingestion for real-time data capture.
 
-2. **Data Storage**:
-   - Data is stored in **Cassandra** for structured and semi-structured information.
-   - Large files are stored in **MinIO** for efficient handling and retrieval.
+2. **Data Stream Management with Kafka and Craft**:
+   - **Kafka** manages data streaming, ensuring seamless data flow.
+   - **Craft** (a zookeeper-like metadata manager) coordinates data streams and handles data cataloging.
+   - **Schema Registry** enforces schema consistency across consumers.
+   - **Control Center** enables visibility into the data streams.
 
-3. **Data Processing**:
-   - **Apache Spark** performs data transformations, feature engineering, and other processing tasks.
+3. **Data Processing with Spark**:
+   - **Bronze Layer**: Raw data.
+   - **Silver Layer**: Cleaned and enriched data.
+   - **Gold Layer**: Aggregated, analytics-ready data.
 
 4. **Data Serving**:
-   - Processed data is loaded into **ClickHouse** for fast analytical queries.
-   - Specific datasets are stored in **PostgreSQL** for relational data analysis.
-
-5. **Monitoring and Logging**:
-   - Metrics and logs are monitored with **Grafana** and **Prometheus**.
-   - Alerts notify users of critical issues, ensuring prompt response.
+   - **Cassandra** is used for fast querying of structured data.
+   - **Slack** notifies the team with real-time insights.
 
 ## Benefits
-- **Scalability**: Distributed components like Apache Spark, Cassandra, and MinIO enable the handling of extensive datasets.
-- **Reliability**: Apache Airflow enhances pipeline reliability with fault-tolerant scheduling.
-- **Flexibility**: Modular architecture simplifies adding new sources or processing steps.
-- **Performance**: ClickHouse and optimized processing enhance query speeds.
-- **Cost-Effectiveness**: Cloud-based, open-source tools minimize costs.
+- **Scalability**: Kafka and Craft manage data streams for efficient scaling.
+- **Reliability**: AWS Lambda and Kafka ensure reliable data streaming.
+- **Flexibility**: Modular design allows for integration of additional data sources.
+- **Performance**: Layered processing enhances both data quality and query performance.
 
 ## Future Enhancements
-- **Machine Learning Integration**: Embed ML models for predictive insights and analytics.
-- **Real-Time Processing**: Improve real-time processing with Apache Kafka or Apache Flink.
-- **Data Governance**: Implement governance policies for data quality and security.
-- **Advanced Analytics**: Integrate data mining, ML, and other analytics for deeper insights.
+- **Machine Learning**: Integrate models for advanced predictive analytics.
+- **Real-Time Expansion**: Further enhance real-time capabilities with additional tools.
+- **Data Governance**: Implement policies for data quality and security.
+- **Advanced Analytics**: Apply data mining and machine learning for deeper insights.
 
 ## Repository Structure
 
 ```plaintext
 data-engineering-pipeline/
-├── README.md                 # Project documentation and overview
-├── src/                      # Source code for ingestion, processing, and serving
-│   ├── ingestion/            # Data ingestion scripts and configurations
-│   ├── processing/           # Data processing and transformation scripts
-│   ├── serving/              # Data serving scripts and API configurations
-│   └── utils/                # Utility scripts and helper functions
-├── dags/                     # Apache Airflow DAGs for pipeline orchestration
-├── data/                     # Sample or temporary data for testing
-├── config/                   # Configuration files for databases and storage
-├── monitoring/               # Monitoring and logging configurations
-│   ├── grafana/              # Grafana dashboard configurations
-│   └── prometheus/           # Prometheus settings
-├── images/                   # Folder containing project images (e.g., architecture.png)
-└── docs/                     # Additional project documentation
+├── README.md                 # Project overview
+├── src/                      # Source code
+│   ├── ingestion/            # Python scripts, API calls, file loaders
+│   ├── streaming/            # Kafka and Craft configuration
+│   ├── processing/           # Spark scripts (bronze, silver, gold layers)
+│   ├── serving/              # Cassandra and Slack integration
+│   └── utils/                # Helper functions
+├── dags/                     # Airflow DAGs
+├── config/                   # Kafka, Craft, schema registry settings
+├── images/                   # Project images (e.g., architecture.png)
+└── docs/                     # Additional documentation
