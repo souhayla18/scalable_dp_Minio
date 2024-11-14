@@ -4,7 +4,7 @@
 This project implements a comprehensive data engineering pipeline for ingesting, processing, and storing data. Using AWS Lambda, Craft (for Kafka management), and Apache Spark, the pipeline efficiently handles data flow from ingestion to storage, supporting both real-time and batch data needs.
 
 ## Architecture
-![Data Engineering Pipeline Architecture](images/architecture.png)
+![Data Engineering Pipeline Architecture](images/minioArch.jpg)
 
 ## Key Components
 
