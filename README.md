@@ -4,7 +4,7 @@
 This project establishes a scalable data engineering pipeline designed to ingest, process, and store data from multiple sources. Leveraging powerful data technologies, this pipeline ensures robust scalability, reliability, and efficiency in handling both real-time and batch data.
 
 ## Architecture
-![Data Engineering Pipeline Architecture](images/architecture.png)
+![Data Engineering Pipeline Architecture](images/minioArch.jpg)
 
 ## Key Components
 
